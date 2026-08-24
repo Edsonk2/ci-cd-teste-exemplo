@@ -1,30 +1,29 @@
-name: Teste CI - cypress
+name: Testes Cypress
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build:
+  cypress:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
-          cache: 'npm'
-      - name: Instalar Dependencias
-        run: npm install
-      - name: Executar testes
-        run: npm test
+          node-version: 20
+          cache: npm
 
-      - name: Gerar relatório allure
-        run: npm run report:generate
+      - name: Instalar dependências
+        run: npm ci
 
-      - name: Publicar relatório no Gh Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public  
-    
+      - name: Executar testes Cypress
+        uses: cypress-io/github-action@v7
